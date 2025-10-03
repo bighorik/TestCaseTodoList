@@ -13,8 +13,6 @@ interface TodoItem {
   completed: boolean
 }
 
-// Тип для новой задачи (без completed)
-type NewTodoItem = Omit<TodoItem, 'id' | 'completed'>
 
 function App() {
   // Состояние для списка задач
