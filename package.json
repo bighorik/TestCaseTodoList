@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "copy:md": "copy functional_requirements.md dist",
+    "predeploy": "npm run build && npm run copy:md",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

@@ -95,6 +95,11 @@ function App() {
       }
     }
 
+    // Проверка описания на использование только кириллицы и спец-символов
+    if (newTodo.description && !/^[а-яА-ЯёЁ\s\-\.\,\!\?\(\)\[\]\{\}\:\;\'\"]+$/.test(newTodo.description)) {
+      newErrors.description = 'Поле "Описание" может содержать только кириллические буквы и спец-символы'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -154,7 +159,11 @@ function App() {
     if (activeTab === 'pending') return !todo.completed
     if (activeTab === 'completed') return todo.completed
     return true // 'all'
-  })
+  }).sort((a, b) => {
+    const dateA = new Date(a.dueDate) as any;
+    const dateB = new Date(b.dueDate) as any;
+    return dateA - dateB;
+  });
 
   // Переключение статуса задачи (выполнено/не выполнено)
   const toggleCompleted = (id: string) => {
@@ -197,7 +206,7 @@ function App() {
       {/* Модальное окно добавления задачи */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onMouseUp={(e) => e.stopPropagation()}>
             <h2>Добавить новую задачу</h2>
             <div className="form-group">
               <label htmlFor="title">Название:</label>
@@ -252,9 +261,14 @@ function App() {
                 id="description"
                 name="description"
                 value={newTodo.description}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  handleInputChange(e)
+                  clearError('description')
+                }}
+                className={errors.dueDate ? 'error' : ''}
                 placeholder="Введите описание задачи"
               />
+              {errors.description && <span className="error-message">{errors.description}</span>}
             </div>
 
             <div className="form-group">
